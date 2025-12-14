@@ -10,13 +10,13 @@ G = {
 }
 
 
-def search_lhs_non_terminal_rule(first, second):
+def search_lhs_non_terminal_rule(first, second, log):
     res = []
     for k, v in G.items():
         for item in v:
             if [first, second] == item:
                 res.append(k)
-                # print("==rule found:", first, second, "<-", k)
+                if log: print("==rule found:", first, second, "<-", k)
     return res
 
 
@@ -85,13 +85,13 @@ def CYK_graph(M, G=None, log=True):
 
                     for lhr in first_non_term_set:
                         for rhr in second_non_term_set:
-                            ntr = search_lhs_non_terminal_rule(lhr, rhr)
+                            ntr = search_lhs_non_terminal_rule(lhr, rhr, log)
                             if len(ntr) > 0:
 
                                 try:
-                                    M[i][j] += search_lhs_non_terminal_rule(lhr, rhr)
+                                    M[i][j] += search_lhs_non_terminal_rule(lhr, rhr, log)
                                 except TypeError:
-                                    M[i][j] = search_lhs_non_terminal_rule(lhr, rhr)
+                                    M[i][j] = search_lhs_non_terminal_rule(lhr, rhr, log)
                                 M[i][j] = list(set(M[i][j]))
 
         if log:

@@ -1,5 +1,4 @@
 import copy
-from collections import defaultdict
 
 G = {
     "A": [["a"]],
@@ -10,25 +9,27 @@ G = {
     "S": [["D", "E"]],
 }
 
-# Precompute for optimization
-term_to_lhs = defaultdict(list)
-pair_to_lhs = defaultdict(list)
-for lhs, rules in G.items():
-    for rhs in rules:
-        if len(rhs) == 1:
-            term_to_lhs[rhs[0]].append(lhs)
-        elif len(rhs) == 2:
-            pair_to_lhs[tuple(rhs)].append(lhs)
-
 
 def search_lhs_non_terminal_rule(first, second):
-    return pair_to_lhs.get((first, second), [])
+    res = []
+    for k, v in G.items():
+        for item in v:
+            if [first, second] == item:
+                res.append(k)
+                # print("==rule found:", first, second, "<-", k)
+    return res
 
 
 def search_lhs_terminal_rule(term=None):
     if not term:
         return []
-    return term_to_lhs.get(term, [])
+    res = []
+    for k, v in G.items():
+        for rhs_item in v:
+            if len(rhs_item) == 1:
+                if term == rhs_item[0]:
+                    res.append(k)
+    return res
 
 
 def logM(M, prefix_msg=None, postfix_msg=None):
@@ -86,8 +87,12 @@ def CYK_graph(M, G=None, log=True):
                         for rhr in second_non_term_set:
                             ntr = search_lhs_non_terminal_rule(lhr, rhr)
                             if len(ntr) > 0:
-                                M[i][j] += ntr
-                    M[i][j] = list(set(M[i][j]))
+
+                                try:
+                                    M[i][j] += search_lhs_non_terminal_rule(lhr, rhr)
+                                except TypeError:
+                                    M[i][j] = search_lhs_non_terminal_rule(lhr, rhr)
+                                M[i][j] = list(set(M[i][j]))
 
         if log:
             logM(M, prefix_msg="M after current pass:")

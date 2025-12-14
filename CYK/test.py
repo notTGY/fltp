@@ -1,9 +1,11 @@
 import time
 import copy
+import sys
+import os
+from contextlib import redirect_stdout
 from naive import CYK_graph as naive_CYK
 from fast import CYK_graph as fast_CYK
 
-# Test cases
 graph1 = [
     ["0", "a", "0", "0", "0"],
     ["0", "0", "d", "0", "0"],
@@ -19,7 +21,6 @@ graph2 = [
     ["0", "0", "0", "c", "c"],
     ["0", "0", "0", "0", "0"],
 ]
-
 
 def test_correctness():
     print("Testing correctness...")
@@ -38,27 +39,28 @@ def test_correctness():
             print("Fast:", fast_result)
 
 
+N = 100
+
+
 def test_performance():
     print("\nTesting performance...")
-    graphs = [graph1, graph2]
-    for i, graph in enumerate(graphs, 1):
-        # Time naive
-        start = time.time()
-        for _ in range(100):  # Run multiple times for better timing
+    graph = graph1
+    start = time.time()
+    with redirect_stdout(open(os.devnull, "w")):
+        for _ in range(N):
             test_graph = copy.deepcopy(graph)
             naive_CYK(test_graph, log=False)
-        naive_time = time.time() - start
+    naive_time = time.time() - start
 
-        # Time fast
-        start = time.time()
-        for _ in range(100):
-            test_graph = copy.deepcopy(graph)
-            fast_CYK(test_graph, log=False)
-        fast_time = time.time() - start
+    start = time.time()
+    for _ in range(N):
+        test_graph = copy.deepcopy(graph)
+        fast_CYK(test_graph, log=False)
+    fast_time = time.time() - start
 
-        print(
-            f"Test {i}: Naive: {naive_time:.4f}s, Fast: {fast_time:.4f}s, Speedup: {naive_time / fast_time:.2f}x"
-        )
+    print(
+        f"Naive: {naive_time:.4f}s, Fast: {fast_time:.4f}s, Speedup: {naive_time / fast_time:.2f}x"
+    )
 
 
 if __name__ == "__main__":

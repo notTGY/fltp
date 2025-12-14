@@ -16,7 +16,7 @@ def search_lhs_non_terminal_rule(first, second):
         for item in v:
             if [first, second] == item:
                 res.append(k)
-                print("==rule found:", first, second, "<-", k)
+                # print("==rule found:", first, second, "<-", k)
     return res
 
 

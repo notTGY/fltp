@@ -80,6 +80,16 @@ python3 main.py --nfa "a|b"        # Only NFA JSON
 python3 main.py --dfa "a|b"        # Only DFA JSON
 ```
 
+### Visualization
+To visualize the automata, pipe the JSON output to `flowchart.py`, which generates an SVG image file:
+
+```bash
+python3 main.py "a|b" | python3 flowchart.py
+# Creates flowchart.svg
+```
+
+This creates an SVG image of the minimized DFA that can be viewed in a web browser. Use `--nfa` or `--dfa` to visualize intermediate steps. The SVG uses a circular layout for states.
+
 ### Makefile
 - `make test`: Run all unit tests.
 - `make run`: Run full pipeline with default regex `'a|b'` and labels.
@@ -94,6 +104,7 @@ python3 main.py --dfa "a|b"        # Only DFA JSON
 - `dfa_minimize.py`: DFA minimization algorithm.
 - `json_output.py`: JSON serialization for automata.
 - `main.py`: Command-line interface for the full pipeline.
+- `flowchart.py`: Utility to generate Graphviz DOT from JSON for visualization.
 - `tests/`: Unit tests for each module.
 - `Makefile`: Build commands.
 

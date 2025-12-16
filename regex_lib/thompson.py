@@ -59,9 +59,8 @@ class Thompson:
             start = self.new_state()
             accept = self.new_state()
             transitions = {start: {"": [expr_nfa.start, accept]}}
-            for acc in expr_nfa.accept:
-                expr_nfa.transitions[acc].setdefault("", []).append(expr_nfa.start)
-                expr_nfa.transitions[acc].setdefault("", []).append(accept)
             transitions.update(expr_nfa.transitions)
+            for acc in expr_nfa.accept:
+                transitions[acc] = {"": [expr_nfa.start, accept]}
             states = {start, accept} | expr_nfa.states
             return NFA(states, transitions, start, {accept})

@@ -46,21 +46,11 @@ class Thompson:
             start = self.new_state()
             accept = self.new_state()
             transitions = {start: {"": [expr_nfa.start, accept]}}
+            transitions.update(expr_nfa.transitions)
             for acc in expr_nfa.accept:
                 transitions.setdefault(acc, {}).setdefault("", []).append(
                     expr_nfa.start
                 )
                 transitions.setdefault(acc, {}).setdefault("", []).append(accept)
-            transitions.update(expr_nfa.transitions)
-            states = {start, accept} | expr_nfa.states
-            return NFA(states, transitions, start, {accept})
-        elif isinstance(node, Star):
-            expr_nfa = self._build(node.expr)
-            start = self.new_state()
-            accept = self.new_state()
-            transitions = {start: {"": [expr_nfa.start, accept]}}
-            transitions.update(expr_nfa.transitions)
-            for acc in expr_nfa.accept:
-                transitions[acc] = {"": [expr_nfa.start, accept]}
             states = {start, accept} | expr_nfa.states
             return NFA(states, transitions, start, {accept})

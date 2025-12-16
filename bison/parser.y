@@ -4,6 +4,9 @@
 int depth_round = 0, max_round = 0;
 int depth_square = 0, max_square = 0;
 int depth_brace = 0, max_brace = 0;
+
+extern int yylex(void);
+void yyerror(char *s);
 %}
 
 %token LPAREN RPAREN LSQUARE RSQUARE LBRACE RBRACE

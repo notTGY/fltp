@@ -1,4 +1,8 @@
-all: parser
+all: test-parser
+
+test-parser: parser
+	 echo '([((()[]))]([])){}' | ./parser && \
+	 echo '([((()[]))]([]))}' | ./parser
 
 parser: lex.yy.c parser.tab.c
 	gcc lex.yy.c parser.tab.c -o parser

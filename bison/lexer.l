@@ -12,7 +12,7 @@ void yyerror(char *s);
 "{" return LBRACE;
 "}" return RBRACE;
 [ \t\n] ; /* ignore whitespace */
-. { yyerror("invalid character"); }
+. { yyerror("invalid character"); return YYERROR; }
 
 %%
 

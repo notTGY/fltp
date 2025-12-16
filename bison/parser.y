@@ -9,13 +9,13 @@ extern int yylex(void);
 void yyerror(char *s);
 %}
 
-%token LPAREN RPAREN LSQUARE RSQUARE LBRACE RBRACE
+%token LPAREN RPAREN LSQUARE RSQUARE LBRACE RBRACE YYERROR
 
 %start input
 
 %%
 
-input: expr { printf("() : %d\n[] : %d\n{} : %d\n", max_round, max_square, max_brace); }
+input: expr
 
 expr: 
      | expr LPAREN {if(++depth_round > max_round) max_round = depth_round;} expr RPAREN {depth_round--;}
@@ -26,8 +26,11 @@ expr:
 %%
 
 int main() {
-    yyparse();
-    return 0;
+    int ret = yyparse();
+    if(ret == 0) {
+        printf("() : %d\n[] : %d\n{} : %d\n", max_round, max_square, max_brace);
+    }
+    return ret;
 }
 
 void yyerror(char *s) {

@@ -9,7 +9,7 @@ extern int yylex(void);
 void yyerror(char *s);
 %}
 
-%token LPAREN RPAREN LSQUARE RSQUARE LBRACE RBRACE YYERROR
+%token LPAREN RPAREN LSQUARE RSQUARE LBRACE RBRACE MYYYERROR
 
 %start input
 

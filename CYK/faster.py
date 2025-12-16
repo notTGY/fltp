@@ -77,26 +77,23 @@ def CYK_graph(M, G=None, log=False):
         logM(M, "After 1st step:")
 
     n = len(M)
-    # динамика для 2 шага и далее:
-    while not matrCmp(M_prev, M):
-        M_prev = copy.deepcopy(M)
-        for i in range(n):
-            for k in range(i, n):
-                for j in range(k, n):
-                    first_non_term_set = M[i][k]
-                    second_non_term_set = M[k][j]
+    for substring_length in range(2, len(M[0])):
+        for i in range(n - substring_length):
+            for first_len in range(1, substring_length):
+                k = i + first_len
+                j = i + substring_length
+                first_non_term_set = M[i][k]
+                second_non_term_set = M[k][j]
 
-                    for lhr in first_non_term_set:
-                        for rhr in second_non_term_set:
-                            ntr = search_lhs_non_terminal_rule(lhr, rhr, log)
-                            if len(ntr) > 0:
-                                s = set(M[i][j])
-                                s.update(ntr)
-                                M[i][j] = list(s)
-
+                for lhr in first_non_term_set:
+                    for rhr in second_non_term_set:
+                        ntr = search_lhs_non_terminal_rule(lhr, rhr, log)
+                        if len(ntr) > 0:
+                            s = set(M[i][j])
+                            s.update(ntr)
+                            M[i][j] = list(s)
         if log:
             logM(M, prefix_msg="M after current pass:")
-
 
 if __name__ == "__main__":
     print("==========Test 1===========")

@@ -22,6 +22,7 @@ graph2 = [
     ["0", "0", "0", "0", "0"],
 ]
 
+
 def test_correctness():
     print("Testing correctness...")
     for i, graph in enumerate([graph1, graph2], 1):
@@ -31,6 +32,14 @@ def test_correctness():
         naive_CYK(naive_result, log=False)
         fast_CYK(fast_result, log=False)
 
+        # Sort inner lists for consistent comparison
+        for row in naive_result:
+            for cell in row:
+                cell.sort()
+        for row in fast_result:
+            for cell in row:
+                cell.sort()
+
         if naive_result == fast_result:
             print(f"Test {i}: PASS - Results match")
         else:
@@ -39,11 +48,11 @@ def test_correctness():
             print("Fast:", fast_result)
 
 
-N = 100
+N = 1000
 
 
 def test_performance():
-    print("\nTesting performance...")
+    print("\nTesting performance on small graph (n=5)...")
     graph = graph1
     start = time.time()
     with redirect_stdout(open(os.devnull, "w")):
@@ -60,6 +69,38 @@ def test_performance():
 
     print(
         f"Naive: {naive_time:.4f}s, Fast: {fast_time:.4f}s, Speedup: {naive_time / fast_time:.2f}x"
+    )
+
+    # Larger test case
+    print("\nTesting performance on larger graph (n=10)...")
+    n_large = 10
+    graph_large = [["0" for _ in range(n_large)] for _ in range(n_large)]
+    # Add some terminals
+    for i in range(n_large):
+        if i % 2 == 0:
+            graph_large[i][i] = "a"
+        if i + 1 < n_large:
+            graph_large[i][i + 1] = "d"
+        if i + 2 < n_large:
+            graph_large[i + 1][i + 2] = "c"
+
+    N_large = max(1, N // 100)  # reduce N for larger n to keep time reasonable
+
+    start = time.time()
+    with redirect_stdout(open(os.devnull, "w")):
+        for _ in range(N_large):
+            test_graph = copy.deepcopy(graph_large)
+            naive_CYK(test_graph, log=False)
+    naive_time_large = time.time() - start
+
+    start = time.time()
+    for _ in range(N_large):
+        test_graph = copy.deepcopy(graph_large)
+        fast_CYK(test_graph, log=False)
+    fast_time_large = time.time() - start
+
+    print(
+        f"Naive: {naive_time_large:.4f}s, Fast: {fast_time_large:.4f}s, Speedup: {naive_time_large / fast_time_large:.2f}x"
     )
 
 

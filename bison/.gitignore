@@ -1,0 +1,12 @@
+# Generated files from Bison and Flex
+lex.yy.c
+parser.tab.c
+parser.tab.h
+parser
+
+# Object files
+*.o
+
+# Other common ignores
+*.log
+*.tmp

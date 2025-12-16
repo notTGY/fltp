@@ -79,8 +79,8 @@ def main():
     # Nodes
     for s in states:
         x, y = positions[s]
-        fill = "green" if s == start else "lightblue"
-        stroke = "red" if s in accept else "black"
+        fill = "lightblue" if s == start else "gray"
+        stroke = "blue" if s in accept else "black"
         stroke_width = "4" if s in accept else "2"
         svg.append(
             f'<circle cx="{x}" cy="{y}" r="20" fill="{fill}" stroke="{stroke}" stroke-width="{stroke_width}"/>'

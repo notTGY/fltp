@@ -10,8 +10,8 @@ class Thompson:
         self.state_counter += 1
         return self.state_counter - 1
 
-    def build_nfa(self, regex):
-        return self._build(regex)
+    def build_nfa(self, ast):
+        return self._build(ast)
 
     def _build(self, node):
         if isinstance(node, Literal):
@@ -22,9 +22,8 @@ class Thompson:
         elif isinstance(node, Concat):
             left_nfa = self._build(node.left)
             right_nfa = self._build(node.right)
-            # add epsilon transition from left accept to right start
-            acc = next(iter(left_nfa.accept))
-            left_nfa.transitions[acc].setdefault("", []).append(right_nfa.start)
+            for acc in left_nfa.accept:
+                left_nfa.transitions[acc].setdefault("", []).append(right_nfa.start)
             left_nfa.transitions.update(right_nfa.transitions)
             left_nfa.states.update(right_nfa.states)
             left_nfa.accept = right_nfa.accept

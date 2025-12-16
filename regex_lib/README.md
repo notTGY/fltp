@@ -66,16 +66,24 @@ Run the full pipeline with:
 ```bash
 python3 main.py "regex"
 ```
+Outputs JSON for the automata. Options control the pipeline depth and output format:
+- `--nfa`: Output only the NFA JSON.
+- `--dfa`: Output only the DFA JSON (skip minimization).
+- `--verbose`: Print labels ("NFA:", "DFA:", etc.) before each JSON.
+- Default: Output only the minimized DFA JSON.
+
 Example:
 ```bash
-python3 main.py "a|b"
+python3 main.py "a|b"              # Only min DFA JSON
+python3 main.py --verbose "a|b"    # Labeled NFA, DFA, min DFA
+python3 main.py --nfa "a|b"        # Only NFA JSON
+python3 main.py --dfa "a|b"        # Only DFA JSON
 ```
-Outputs NFA, DFA, and minimized DFA in JSON.
 
 ### Makefile
 - `make test`: Run all unit tests.
-- `make run`: Run with default regex `'a|b'`.
-- `make run REGEX='your_regex'`: Run with custom regex.
+- `make run`: Run full pipeline with default regex `'a|b'` and labels.
+- `make run REGEX='your_regex'`: Run full pipeline with custom regex and labels.
 
 ## Project Structure
 

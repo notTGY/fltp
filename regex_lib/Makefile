@@ -4,4 +4,4 @@ test:
 	python3 -m unittest discover -s tests
 
 run:
-	python3 main.py "$(REGEX)"
+	python3 main.py --verbose "$(REGEX)"

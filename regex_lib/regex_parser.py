@@ -42,7 +42,7 @@ class RegexParser:
 
     def _parse_term(self):
         left = self._parse_factor()
-        while self.pos < len(self.regex) and self.regex[self.pos] not in "|)":
+        while self.pos < len(self.regex) and self.regex[self.pos] not in "|)*":
             right = self._parse_factor()
             left = Concat(left, right)
         return left

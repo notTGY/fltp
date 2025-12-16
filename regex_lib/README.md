@@ -67,6 +67,7 @@ Run the full pipeline with:
 python3 main.py "regex"
 ```
 Outputs JSON for the automata. Options control the pipeline depth and output format:
+- `--ast`: Output only the AST (Abstract Syntax Tree) for the regex.
 - `--nfa`: Output only the NFA JSON.
 - `--dfa`: Output only the DFA JSON (skip minimization).
 - `--verbose`: Print labels ("NFA:", "DFA:", etc.) before each JSON.
@@ -76,6 +77,7 @@ Example:
 ```bash
 python3 main.py "a|b"              # Only min DFA JSON
 python3 main.py --verbose "a|b"    # Labeled NFA, DFA, min DFA
+python3 main.py --ast "a|b"        # Only AST
 python3 main.py --nfa "a|b"        # Only NFA JSON
 python3 main.py --dfa "a|b"        # Only DFA JSON
 ```

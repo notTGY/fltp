@@ -6,11 +6,17 @@ class Literal(RegexNode):
     def __init__(self, char):
         self.char = char
 
+    def __repr__(self):
+        return f"Literal('{self.char}')"
+
 
 class Concat(RegexNode):
     def __init__(self, left, right):
         self.left = left
         self.right = right
+
+    def __repr__(self):
+        return f"Concat({self.left!r}, {self.right!r})"
 
 
 class Alternation(RegexNode):
@@ -18,10 +24,16 @@ class Alternation(RegexNode):
         self.left = left
         self.right = right
 
+    def __repr__(self):
+        return f"Alternation({self.left!r}, {self.right!r})"
+
 
 class Star(RegexNode):
     def __init__(self, expr):
         self.expr = expr
+
+    def __repr__(self):
+        return f"Star({self.expr!r})"
 
 
 class RegexParser:

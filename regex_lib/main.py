@@ -15,11 +15,16 @@ if __name__ == "__main__":
     parser.add_argument(
         "--verbose", action="store_true", help="Print labels for each automaton"
     )
+    parser.add_argument("--ast", action="store_true", help="Print AST")
 
     args = parser.parse_args()
 
     regex_parser = RegexParser(args.regex)
     ast = regex_parser.parse()
+
+    if args.ast:
+        print(ast)
+        sys.exit(0)
 
     thompson = Thompson()
     nfa = thompson.build_nfa(ast)

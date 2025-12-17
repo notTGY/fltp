@@ -1,5 +1,13 @@
 all: test-wc test-anbn
 
+
+bench-wc: test.txt
+	time (cat test.txt | ./wc) && \
+	time (cat test.txt | wc)
+
+test.txt:
+	python3 -c "open('test.txt', 'w').write((('a'*1000 + " ") * 10 + '\n') * 100)"
+
 test-anbn: anbn
 	echo "aaabbb" | ./anbn && echo "expected:\n1"
 

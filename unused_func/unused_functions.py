@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from __future__ import annotations
 
 import argparse
@@ -34,11 +32,6 @@ def parse_args() -> argparse.Namespace:
         default=[],
         help="Extra argument passed to clang. Can be used multiple times.",
     )
-    parser.add_argument(
-        "--show-calls",
-        action="store_true",
-        help="Print the direct call graph for functions defined in the file.",
-    )
     return parser.parse_args()
 
 
@@ -58,7 +51,9 @@ def load_ast(source: Path, clang: str, clang_args: list[str]) -> dict:
     ]
     result = subprocess.run(command, capture_output=True, text=True)
     if result.returncode != 0:
-        fail(result.stderr.strip() or f"clang failed with exit code {result.returncode}")
+        fail(
+            result.stderr.strip() or f"clang failed with exit code {result.returncode}"
+        )
 
     try:
         return json.loads(result.stdout)
@@ -76,7 +71,9 @@ def is_source_function(node: dict, source: Path) -> bool:
         if "includedFrom" in location:
             return False
 
-        explicit_file = location.get("expansionLoc", {}).get("file") or location.get("file")
+        explicit_file = location.get("expansionLoc", {}).get("file") or location.get(
+            "file"
+        )
         if explicit_file and Path(explicit_file).resolve() != source:
             return False
 
@@ -107,7 +104,9 @@ def collect_function_definitions(ast: dict, source: Path) -> dict[str, FunctionI
         if not name:
             continue
 
-        line = node.get("loc", {}).get("line") or node.get("range", {}).get("begin", {}).get("line")
+        line = node.get("loc", {}).get("line") or node.get("range", {}).get(
+            "begin", {}
+        ).get("line")
         functions[name] = FunctionInfo(name=name, line=line, node=node)
 
     return functions
@@ -168,16 +167,17 @@ def reachable_from_main(graph: dict[str, list[str]]) -> tuple[set[str], list[str
     return seen, order
 
 
-def ordered_names(names: set[str] | list[str], functions: dict[str, FunctionInfo]) -> list[str]:
+def ordered_names(
+    names: set[str] | list[str], functions: dict[str, FunctionInfo]
+) -> list[str]:
     return sorted(
         names,
         key=lambda name: (name != "main", functions[name].line or sys.maxsize, name),
     )
 
 
-def format_function(name: str, functions: dict[str, FunctionInfo]) -> str:
-    line = functions[name].line
-    return f"{name} (line {line})" if line is not None else name
+def print_function(name: str, functions: dict[str, FunctionInfo]) -> str:
+    print(f"{functions[name].line}:{name}" if functions[name].line is not None else name)
 
 
 def main() -> None:
@@ -199,30 +199,20 @@ def main() -> None:
     reachable, reachable_order = reachable_from_main(graph)
     unreachable = set(functions) - reachable
 
-    print(f"Source file: {source}")
     print(f"Functions defined in file: {len(functions)}")
     print()
     print("Reachable from main:")
     for name in reachable_order:
-        print(f"- {format_function(name, functions)}")
+        print_function(name, functions)
 
     print()
     print("Unreachable from main:")
     if unreachable:
         for name in ordered_names(unreachable, functions):
-            print(f"- {format_function(name, functions)}")
+            print_function(name, functions)
+        raise SystemExit(1)
     else:
         print("- none")
-
-    if args.show_calls:
-        print()
-        print("Direct call graph:")
-        for name in ordered_names(set(functions), functions):
-            callees = graph[name]
-            if callees:
-                print(f"- {name}: {', '.join(callees)}")
-            else:
-                print(f"- {name}: none")
 
 
 if __name__ == "__main__":

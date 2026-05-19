@@ -1,0 +1,27 @@
+name: Check sample.c
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang
+        run: sudo apt-get update && sudo apt-get install -y clang
+      - name: Verify checker flags sample.c
+        working-directory: unused_func
+        run: |
+          set +e
+          output="$(python3 unused_functions.py sample.c 2>&1)"
+          exit_code=$?
+          set -e
+
+          printf '%s\n' "$output"
+          [ "$exit_code" -ne 0 ]
+          printf '%s\n' "$output" | grep -F "11:unused_leaf"
+          printf '%s\n' "$output" | grep -F "15:unused_mid"
+          printf '%s\n' "$output" | grep -F "19:also_unused"

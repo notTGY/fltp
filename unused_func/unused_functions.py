@@ -87,13 +87,12 @@ def function_body(node: dict) -> dict | None:
     return None
 
 
-def collect_function_definitions(ast: dict, source: Path) -> dict[str, FunctionInfo]:
+def collect_function_definitions(ast: dict, source: Path) -> (dict[str, FunctionInfo], dict[str, FunctionInfo]):
     functions: dict[str, FunctionInfo] = {}
+    extra_functions: dict[str, FunctionInfo] = {}
 
     for node in ast.get("inner", []):
         if node.get("kind") != "FunctionDecl":
-            continue
-        if not is_source_function(node, source):
             continue
 
         body = function_body(node)
@@ -107,9 +106,12 @@ def collect_function_definitions(ast: dict, source: Path) -> dict[str, FunctionI
         line = node.get("loc", {}).get("line") or node.get("range", {}).get(
             "begin", {}
         ).get("line")
+        if not is_source_function(node, source):
+            extra_functions[name] = FunctionInfo(name=name, line=line, node=node)
+            continue
         functions[name] = FunctionInfo(name=name, line=line, node=node)
 
-    return functions
+    return functions,extra_functions
 
 
 def walk_inner(node: dict):
@@ -190,7 +192,7 @@ def main() -> None:
         fail(f"file not found: {source}")
 
     ast = load_ast(source, args.clang, args.clang_arg)
-    functions = collect_function_definitions(ast, source)
+    functions, extra_functions = collect_function_definitions(ast, source)
 
     if "main" not in functions:
         fail("no main function definition found in the source file")
@@ -199,11 +201,16 @@ def main() -> None:
     reachable, reachable_order = reachable_from_main(graph)
     unreachable = set(functions) - reachable
 
+    print("Functions defined externally:")
+    for name in extra_functions:
+        print_function(name, extra_functions)
+    print()
     print(f"Functions defined in file: {len(functions)}")
     print()
     print("Reachable from main:")
     for name in reachable_order:
         print_function(name, functions)
+
 
     print()
     print("Unreachable from main:")

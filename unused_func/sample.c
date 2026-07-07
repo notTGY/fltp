@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include"other.c"
 
 static void used_leaf(void) {
     printf("used\\n");
